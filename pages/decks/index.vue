@@ -2,7 +2,7 @@
   <div>
     <div class="ct">
       <div class="d_flex justify_content_between my_3">
-        <h2>S</h2>
+        <h2>Sua eo j ma sua</h2>
         <h3>List of your decks:</h3>
         <button class="btn btn_success" @click.prevent="openModal">
           Create a Deck
