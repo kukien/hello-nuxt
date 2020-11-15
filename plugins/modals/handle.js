@@ -4,6 +4,7 @@ const VModal = {
   install(Vue) {
     this.EventBus = new Vue()
     Vue.component('v-modal', Layout)
+    // Vue.prototype = this
     Vue.prototype.$modal = {
       open(params) {
         VModal.EventBus.$emit('open', params)
