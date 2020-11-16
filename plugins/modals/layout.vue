@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     open(params) {
-      console.log('this.name: ', this.name)
+      this.payload = params.payload
       this.visible = true
       // to do something
     },

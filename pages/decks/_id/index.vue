@@ -17,6 +17,12 @@
           >
             Edit deck
           </button>
+          <button
+            class="btn btn_danger"
+            @click.prevent="openModal('DeleteDeckModal')"
+          >
+            Delete deck
+          </button>
         </div>
         <hr class="divide" />
         <div class="r">
@@ -61,6 +67,24 @@
             <button class="btn btn_success ml_3" @click.prevent="closeModal">
               Create
             </button>
+          </div>
+        </form>
+      </div>
+    </v-modal>
+    <!-- Modal delete -->
+    <v-modal name="DeleteDeckModal">
+      <div class="modal_body">
+        <h2>Delete this deck</h2>
+        <p>
+          Are you sure to delete this deck with id is
+          {{ this.$route.params.id }}
+        </p>
+        <form @submit.prevent="onDeleteSubmit">
+          <div class="form_group d_flex justify_content_center">
+            <button class="btn btn_danger" @click.prevent="closeModalDelete">
+              No
+            </button>
+            <button class="btn btn_success ml_3" type="submit">Yes</button>
           </div>
         </form>
       </div>
@@ -125,11 +149,34 @@ export default {
       if (name === 'CreateCardModal') {
         this.$modal.open({ name: 'CreateCardModal' })
       } else if (name === 'DeckFormModal') {
-        this.$modal.open({ name: 'DeckFormModal' })
+        this.$modal.open({
+          name: 'DeckFormModal',
+          payload: { ...this.deck, id: this.$route.params.id },
+        })
+      } else if (name === 'DeleteDeckModal') {
+        this.$modal.open({ name: 'DeleteDeckModal' })
       }
     },
     closeModal() {
       this.$modal.close({ name: 'CreateCardModal' })
+    },
+    onDeleteSubmit() {
+      console.log('id: ----------------', this.$route.params.id)
+      if (this.$route.params.id) {
+        axios
+          .delete(
+            'https://nuxt-lerning-english.firebaseio.com/decks/' +
+              this.$route.params.id +
+              '.json'
+          )
+          .catch((e) => {
+            console.log(e)
+          })
+      }
+      this.$modal.close({ name: 'DeleteDeckModal' })
+    },
+    closeModalDelete() {
+      this.$modal.close({ name: 'DeleteDeckModal' })
     },
   },
 }

@@ -7,6 +7,13 @@ const createStpre = () => {
       decks: [],
     },
     mutations: {
+      addDeck(state, newDeck) {
+        state.decks.push(newDeck)
+      },
+      editDeck(state, editDeck) {
+        const deckIndex = state.deck.findIndex(d => d.id === editDeck.id)
+        state.decks[deckIndex] = editDeck
+      },
       setDecks(state, decks) {
         state.decks = decks
       },
@@ -54,6 +61,19 @@ const createStpre = () => {
         //     resolve()
         //   }, 1500)
         // })
+      },
+      addDeck(vuexContext, deckData) {
+        return axios
+          .post(
+            'https://nuxt-lerning-english.firebaseio.com/decks.json',
+            deckData
+          )
+          .then((data) => {
+            vuexContext.commit('addDeck', data)
+          })
+          .catch((e) => {
+            console.log(e)
+          })
       },
       setDecks(vuexContext, decks) {
         vuexContext.commit('setDecks', decks)

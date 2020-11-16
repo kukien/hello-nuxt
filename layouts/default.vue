@@ -3,10 +3,12 @@
     <default-header></default-header>
     <Nuxt />
     <!-- Modal -->
-    <v-modal name="DeckFormModal">
+    <v-modal v-slot="payload" name="DeckFormModal">
       <div class="modal_body">
-        <h2>Create a new Deck</h2>
-        <deck-form @submit="onSubmit" />
+        <h2>
+          {{ payload && payload.payload ? 'Edit a Deck' : 'Create a new Deck' }}
+        </h2>
+        <deck-form :deck="payload.payload" @submit="onSubmit" />
       </div>
     </v-modal>
     <default-footer></default-footer>
@@ -27,17 +29,25 @@ export default {
   },
   methods: {
     onSubmit(deckData) {
-      axios
-        .post(
-          'https://nuxt-lerning-english.firebaseio.com/decks.json',
-          deckData
-        )
-        .then((data) => {
-          console.log(data)
-        })
-        .catch((e) => {
-          console.log(e)
-        })
+      if (deckData && !deckData.id) {
+        this.$store.dispatch('addDeck', deckData)
+      } else {
+        const deckId = deckData.id
+        delete deckData.id
+        axios
+          .put(
+            'https://nuxt-lerning-english.firebaseio.com/decks/' +
+              deckId +
+              '.json',
+            deckData
+          )
+          .then((data) => {
+            console.log(data)
+          })
+          .catch((e) => {
+            console.log(e)
+          })
+      }
     },
   },
 }
