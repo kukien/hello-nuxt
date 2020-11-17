@@ -11,7 +11,7 @@ const createStpre = () => {
         state.decks.push(newDeck)
       },
       editDeck(state, editDeck) {
-        const deckIndex = state.deck.findIndex(d => d.id === editDeck.id)
+        const deckIndex = state.decks.findIndex((d) => d.id === editDeck.id)
         state.decks[deckIndex] = editDeck
       },
       setDecks(state, decks) {
@@ -20,56 +20,41 @@ const createStpre = () => {
     },
     actions: {
       nuxtServerInit(vuexContext, context) {
-        return axios
-          .get('https://nuxt-lerning-english.firebaseio.com/decks.json')
-          .then((response) => {
+        return context.app.$axios
+          .$get(process.env.baseApiUrl + '/decks.json')
+          .then((data) => {
             const decksArr = []
-            for (const key in response.data) {
-              decksArr.push({ ...response.data[key], id: key })
+            for (const key in data) {
+              decksArr.push({ ...data[key], id: key })
             }
             vuexContext.commit('setDecks', decksArr)
           })
-        // return new Promise((resolve, reject) => {
-        //   // eslint-disable-next-line nuxt/no-timing-in-fetch-data
-        //   setTimeout(() => {
-        //     vuexContext.commit('setDecks', [
-        //       {
-        //         _id: 1,
-        //         name: 'Learn English',
-        //         description:
-        //           "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        //         thumbnail:
-        //           'https://img2.pngio.com/intl-word-v601-english-for-mac-english-class-wallpaper-png-1920_1080.png',
-        //       },
-        //       {
-        //         _id: 2,
-        //         name: 'Learn Japan',
-        //         description:
-        //           "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        //         thumbnail:
-        //           'https://img2.pngio.com/intl-word-v601-english-for-mac-english-class-wallpaper-png-1920_1080.png',
-        //       },
-        //       {
-        //         _id: 3,
-        //         name: 'Learn China',
-        //         description:
-        //           "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        //         thumbnail:
-        //           'https://img2.pngio.com/intl-word-v601-english-for-mac-english-class-wallpaper-png-1920_1080.png',
-        //       },
-        //     ])
-        //     resolve()
-        //   }, 1500)
-        // })
       },
       addDeck(vuexContext, deckData) {
-        return axios
-          .post(
-            'https://nuxt-lerning-english.firebaseio.com/decks.json',
+        return this.$axios
+          .$post(
+            process.env.baseApiUrl + '/decks.json',
             deckData
           )
           .then((data) => {
-            vuexContext.commit('addDeck', data)
+            vuexContext.commit('addDeck', { ...deckData, id: data.name })
+          })
+          .catch((e) => {
+            console.log(e)
+          })
+      },
+      editDeck(vuexContext, deckData) {
+        const deckId = deckData.id
+        delete deckData.id
+        return this.$axios
+          .$put(
+            process.env.baseApiUrl + '/decks/' +
+            deckId +
+            '.json',
+            deckData
+          )
+          .then((data) => {
+            vuexContext.commit('editDeck', { ...data, id: deckId })
           })
           .catch((e) => {
             console.log(e)

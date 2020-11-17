@@ -27,7 +27,6 @@ export default {
   components: {
     DeckList,
   },
-
   // context: da thuc thi khi ket noi voi api
   // vd: context.asynch
   // sau khi xong se goi den callback
@@ -137,6 +136,9 @@ export default {
     openModal() {
       this.$modal.open({ name: 'DeckFormModal' })
     },
+  },
+  head: {
+    title: 'Decks | Learning Languages By Flash Card Online',
   },
 }
 </script>

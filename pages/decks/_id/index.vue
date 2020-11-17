@@ -101,13 +101,11 @@ export default {
     CardList,
   },
   asyncData(context) {
-    return axios
-      .get(
-        `https://nuxt-lerning-english.firebaseio.com/decks/${context.params.id}.json`
-      )
-      .then((response) => {
+    return context.app.$axios
+      .$get(`${process.env.baseApiUrl}/decks/${context.params.id}.json`)
+      .then((data) => {
         return {
-          deck: response.data,
+          deck: data,
         }
       })
       .catch((e) => {
@@ -161,7 +159,6 @@ export default {
       this.$modal.close({ name: 'CreateCardModal' })
     },
     onDeleteSubmit() {
-      console.log('id: ----------------', this.$route.params.id)
       if (this.$route.params.id) {
         axios
           .delete(
@@ -178,6 +175,11 @@ export default {
     closeModalDelete() {
       this.$modal.close({ name: 'DeleteDeckModal' })
     },
+  },
+  head() {
+    return {
+      title: `Deck: ${this.deck.name} | Learning Languages By Flash Card Online`,
+    }
   },
 }
 </script>
